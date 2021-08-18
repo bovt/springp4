@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="keywords" th:content="${keywords}"/>
+    <title>List of all authors</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors, .authors td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>Authors:</h1>
+
+<table class="authors">
+    <thead>
+    <tr>
+        <th>Text</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<h1>Links:</h1>
+<br><a href="/swagger-ui/">Swagger UI</a>
+<br><a href="/actuator/">Actuator</a>
+<br><a href="/actuator/health/">BookShelf HealthCheck</a>
+<br><a href="/nindex/">Notes index</a>
+<br><a href="/bindex/">Books index</a>
+<br><a href="/aindex/">Authors index</a>
+<br><a href="/cindex/">Categories index</a>
+
+<script>
+    $(function () {
+        $.get('/api/author').done(function (authors) {
+            authors.forEach(function (author) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${author.id}</td>
+                        <td>${author.name}</td>
+                        <td>${author.password}</td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+</body>
+</html>

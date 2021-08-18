@@ -1,0 +1,21 @@
+bot:
+  name: BvtSpring01_bot
+  token: ${TGNA_BOT_TOKEN1}
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enable: false
+note-client:
+  ribbon:
+    listOfServers: localhost:8080
+server:
+  port: 8085
+
+hystrix:
+  command:
+    greeting:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds:10000

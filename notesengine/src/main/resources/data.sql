@@ -1,0 +1,15 @@
+insert into author (id, name, password) values (null, 'androidapp1', 'llll000');
+insert into author (id, name, password) values (null, 'telegrambot1', 'sdfq');
+insert into author (id, name, password) values (null, 'spa1', '435rf3');
+insert into category (id, name) values (null, 'todo');
+insert into category (id, name) values (null, 'фразы');
+insert into category (id, name) values (null, 'пригодится');
+insert into book (id, name) values (null, 'local_notes');
+insert into book (id, name) values (null, 'global_notes');
+insert into book (id, name) values (null, 'misc_notes');
+insert into note (id, text, author_id, book_id) values (null, 'Съешь же ещё этих мягких французских булок да выпей чаю.', select id from author where name like '%androidapp1%', select id from book where name like '%local_notes%');
+insert into note (id, text, author_id, book_id) values (null, 'The five boxing wizards jump quickly.', select id from author where name like '%androidapp1%', select id from book where name like '%local_notes%');
+insert into note_categories (note_id, category_id) values (select id from note where text like '%Съешь%', select id from category where name='todo');
+insert into note_categories (note_id, category_id) values (select id from note where text like '%The%', select id from category where name='пригодится');
+insert into note_categories (note_id, category_id) values (select id from note where text like '%Съешь%', select id from category where name='фразы');
+insert into note_categories (note_id, category_id) values (select id from note where text like '%The%', select id from category where name='фразы');
