@@ -1,0 +1,16 @@
+POST http://localhost:8080/notes
+Content-Type: application/json
+
+{"text":"The 777 five boxing wizards jump quickly."}
+
+###
+POST http://localhost:8080/notes
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="field-name"
+
+{"id":3,"text":"The five boxing wizards jump quickly."}
+--WebAppBoundary--
+
+###

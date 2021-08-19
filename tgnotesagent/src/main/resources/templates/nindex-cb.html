@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="keywords" th:content="${keywords}"/>
+    <title>List of all notes</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .notes, .notes td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>Notes:</h1>
+
+<table class="notes">
+    <thead>
+    <tr>
+        <th>Text</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        $.get('/api/note').done(function (notes) {
+            notes.forEach(function (note) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${note.id}</td>
+                        <td>${note.text}</td>
+                        <td><a href="/aindex-cb">${note.authorName} (${note.authorId})</a></td>
+                        <td><a href="/bindex-cb">${note.bookName} (${note.bookId})</a></td>
+                        <td><a href="/cindex-cb">${note.categoriesName} (${note.categoriesId})</a></td>
+                    </tr>                `)
+            });
+        })
+    });
+</script>
+</body>
+</html>
