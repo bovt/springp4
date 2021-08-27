@@ -21,7 +21,7 @@ public class Note {
     @Column(name = "id", nullable = false, unique = true)
     private long id;
 
-    @Column(name = "text", nullable = false, unique = true)
+    @Column(name = "text", nullable = false, unique = false)
     private String text;
 
 

@@ -1,30 +1,30 @@
 package ru.bvt.notesengine.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bvt.notesengine.domain.Book;
-import ru.bvt.notesengine.repository.BookRepositoryExtended;
-import ru.bvt.notesengine.repository.BookRepositoryExtendedSimple;
+import ru.bvt.notesengine.repository.BookRepository;
 import ru.bvt.notesengine.rest.dto.BookDto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
 public class BookServiceSimple implements BookService {
 
-    private BookRepositoryExtended repository;
+    private final BookRepository repository;
 
     @Transactional(readOnly = true)
     public List<BookDto> getAllBooks() {
-        return repository.findAllAsDto();
+        return repository.findAll().stream().map(BookDto::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public BookDto getBook(long id) {
-        return repository.findByIdAsDto(id);
+        Book book = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + id));
+        return new BookDto(book);
     }
 
     @Transactional(readOnly = false)
@@ -33,13 +33,17 @@ public class BookServiceSimple implements BookService {
         if (repository.existsById(id)) {
             throw (new IllegalArgumentException("Invalid book Id:" + id));
         }
-        bookDto.setId(0);
-        return repository.create(bookDto);
+        Book book = new Book(bookDto.getName());
+        book = repository.save(book);
+        return book.getId();
     }
 
     @Transactional(readOnly = false)
     public long setBook(BookDto bookDto) {
-        return repository.update(bookDto);
+        Book book = repository.findById(bookDto.getId()).orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + bookDto.getId()));
+        book.setName(bookDto.getName());
+        book = repository.save(book);
+        return book.getId();
     }
 
     @Transactional(readOnly = false)

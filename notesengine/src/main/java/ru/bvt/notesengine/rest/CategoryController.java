@@ -38,7 +38,7 @@ public class CategoryController {
     }
 
     @PutMapping("/api/category/{id}")
-    public String updateCategory(@PathVariable("id") long id, CategoryDto categoryDto, BindingResult result, Model model) {
+    public String updateCategory(@PathVariable("id") long id, @RequestBody CategoryDto categoryDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "updateCategory";
         }

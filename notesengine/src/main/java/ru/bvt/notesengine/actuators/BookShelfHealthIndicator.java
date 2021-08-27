@@ -1,22 +1,18 @@
 package ru.bvt.notesengine.actuators;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.stereotype.Component;
-import ru.bvt.notesengine.repository.BookRepositoryExtended;
-import ru.bvt.notesengine.repository.BookRepositoryExtendedSimple;
+import ru.bvt.notesengine.repository.BookRepository;
 
+@AllArgsConstructor
 @Component
 public class BookShelfHealthIndicator implements HealthIndicator {
 
-    private BookRepositoryExtended bookRepository;
-
-    @Autowired
-    public void BookShelfHealthIndicator(BookRepositoryExtendedSimple bookRepository) {
-        this.bookRepository = bookRepository;
-    }
+    private final BookRepository bookRepository;
 
     @Override
     public Health health() {

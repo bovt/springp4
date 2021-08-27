@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      database: company
+
+mongock:
+  runner-type: "ApplicationRunner" # default
+  #runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.bvt.wf.wfmnotesengine.mongock.changelog
+
+server:
+  port: 8084

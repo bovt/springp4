@@ -21,7 +21,7 @@ public class AuthorServiceWithCBSimple implements AuthorServiceWithCB {
     }
 
     private List<AuthorDto> defaultGetAllAuthors() {
-        List<AuthorDto> authorList = Arrays.asList(new AuthorDto(0, "N/A", "N/A"));
+        List<AuthorDto> authorList = Arrays.asList(new AuthorDto(0, "N/A", "N/A", "N/A"));
         return authorList;
     }
 

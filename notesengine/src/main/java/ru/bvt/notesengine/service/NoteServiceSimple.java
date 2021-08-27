@@ -2,6 +2,7 @@ package ru.bvt.notesengine.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,72 +18,81 @@ import ru.bvt.notesengine.rest.dto.NoteBriefDto;
 import ru.bvt.notesengine.rest.dto.NoteDto;
 import ru.bvt.notesengine.rest.dto.NoteFullDto;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
 public class NoteServiceSimple implements NoteService {
 
-    private NoteRepositoryExtended repository;
-    private BookRepositoryExtended bookRepository;
-    private CategoryRepositoryExtended categoryRepository;
-    private AuthorRepositoryExtended authorRepository;
+    private final Long defaultBookId;
+    private final NoteRepository repository;
+    private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
+    private final AuthorRepository authorRepository;
 
-    @PersistenceContext
-    private EntityManager em;
+    @Autowired
+    public NoteServiceSimple(@Value("${engine.defaults.book}") Long defaultBookId, NoteRepository repository, BookRepository bookRepository,
+                             CategoryRepository categoryRepository, AuthorRepository authorRepository) {
+        this.defaultBookId = defaultBookId;
+        this.repository = repository;
+        this.bookRepository = bookRepository;
+        this.categoryRepository = categoryRepository;
+        this.authorRepository = authorRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<NoteFullDto> getAllNotes() {
-        EntityGraph<?> entityGraph = em.getEntityGraph("authors-entity-graph");
-        TypedQuery<Note> query = em.createQuery("select n from Note n join fetch n.book", Note.class);
-        query.setHint("javax.persistence.fetchgraph", entityGraph);
-        return query.getResultList().stream().map(NoteFullDto::toDto).collect(Collectors.toList());
-//        return repository.findAllAsDto();
+        return repository.findAll().stream().map(NoteFullDto::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public NoteFullDto getNote(long id) {
-        return repository.findByIdAsDto(id);
+        return new NoteFullDto(repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid note Id:" + id)));
     }
 
     @Transactional(readOnly = false)
     public long addNote(NoteDto noteDto) {
-        return repository.create(new Note(
+        Note note = new Note(
                 0,
                 noteDto.getText(),
                 getCurrentAuthor(),
                 bookRepository.findById(noteDto.getBookId()).orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + noteDto.getBookId())),
-                prepareCategoryList(noteDto.getText()))); // TODO: список категорий
+                prepareCategoryList(noteDto.getText()));
+        note = repository.save(note);
+        return note.getId();
     }
 
     @Transactional(readOnly = false)
     public long addNote(NoteBriefDto noteBriefDto) {
-        Book book = bookRepository.findById(1).orElseThrow(() -> new IllegalArgumentException("Not exist default book Id:1"));
-        return repository.create(new Note(
+        Book book = bookRepository.findById(defaultBookId).orElseThrow(() -> new IllegalArgumentException("Not exist default book Id:" + defaultBookId));
+        Note note = new Note(
                 0,
                 noteBriefDto.getText(),
                 getCurrentAuthor(),
                 book,
-                prepareCategoryList(noteBriefDto.getText())));
-
+                prepareCategoryList(noteBriefDto.getText()));
+        note = repository.save(note);
+        return note.getId();
     }
 
     @Transactional(readOnly = false)
     public long setNote(NoteFullDto noteFullDto) {
         Book book = bookRepository.findById(noteFullDto.getBookId()).orElseThrow(() -> new IllegalArgumentException("Invalid bookId" + noteFullDto.getBookId()));
-        return repository.update(new Note(
+        Note note = new Note(
                 noteFullDto.getId(),
                 noteFullDto.getText(),
                 getCurrentAuthor(),
                 book,
-                prepareCategoryList(noteFullDto.getText())));
+                prepareCategoryList(noteFullDto.getText()));
+        Note resultNote = repository.findById(note.getId()).orElseThrow(() -> new IllegalArgumentException("Invalid note Id:" + note.getId()));
+        resultNote.setText(note.getText());
+        resultNote.setBook(note.getBook());
+        resultNote.setAuthor(note.getAuthor());
+        resultNote.setCategories(note.getCategories());
+        resultNote = repository.save(resultNote);
+        return resultNote.getId();
     }
 
     @Transactional(readOnly = false)
@@ -106,12 +116,14 @@ public class NoteServiceSimple implements NoteService {
                     substr.length()};
             var min = Arrays.stream(nums).min();
             currentString = substr.substring(0, min.isPresent() ? min.getAsInt() : substr.length());
-            currentCategory = categoryRepository.findByName(currentString);
-            if (currentCategory == null) {
-                currentCategory = new Category(currentString);
-                categoryRepository.save(currentCategory);
+            if (currentString.length() > 0) {
+                currentCategory = categoryRepository.findByName(currentString);
+                if (currentCategory == null) {
+                    currentCategory = new Category(currentString);
+                    categoryRepository.save(currentCategory);
+                }
+                categoryList.add(currentCategory);
             }
-            categoryList.add(currentCategory);
         }
         return categoryList;
     }

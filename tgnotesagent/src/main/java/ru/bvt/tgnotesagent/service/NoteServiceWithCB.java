@@ -5,5 +5,5 @@ import ru.bvt.tgnotesagent.rest.dto.NoteFullDto;
 import java.util.List;
 
 public interface NoteServiceWithCB {
-    public List<NoteFullDto> getAllNotes();
+    List<NoteFullDto> getAllNotes();
 }

@@ -7,14 +7,16 @@ import java.util.List;
 
 public interface AuthorService {
 
-    public List<AuthorDto> getAllAuthors();
+    List<AuthorDto> getAllAuthors();
 
-    public long addAuthor(AuthorDto newAuthorDto);
+    long addAuthor(AuthorDto newAuthorDto);
 
-    public AuthorDto getAuthor(long id);
+    AuthorDto getAuthor(long id);
 
-    public long setAuthor(AuthorDto authorDto);
+    AuthorDto getAuthor(String name);
 
-    public long deleteAuthor(long id);
+    long setAuthor(AuthorDto authorDto);
+
+    long deleteAuthor(long id);
 
 }

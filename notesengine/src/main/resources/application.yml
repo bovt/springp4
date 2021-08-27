@@ -1,15 +1,19 @@
+engine:
+  defaults:
+    book: 2
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+    logfile:
+      external-file: logs/custom.log
   endpoint:
     health:
       show-details: always
   health:
     defaults:
       enabled: true
-
 spring:
   datasource:
     spring:
@@ -28,3 +32,5 @@ spring:
 logging:
   level:
     ROOT: INFO
+  file:
+    name: logs/custom.log
