@@ -11,11 +11,3 @@ note-client:
     listOfServers: localhost:8080
 server:
   port: 8085
-
-hystrix:
-  command:
-    greeting:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds:10000

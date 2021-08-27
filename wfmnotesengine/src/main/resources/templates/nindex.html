@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="keywords" th:content="${keywords}"/>
+    <title>List of all notes</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .notes, .notes td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+<h1>Notes:</h1>
+
+<a th:href="@{/index}">Back to Index</a>
+
+<table class="notes">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Text</th>
+        <th>Author</th>
+    <tr class="result" data-th-each="note : ${notes}">
+        <td>[[${note.id}]]</td>
+        <td>[[${note.text}]]</td>
+        <td>[[${note.author}]]</td>
+    </tr>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+</body>
+</html>

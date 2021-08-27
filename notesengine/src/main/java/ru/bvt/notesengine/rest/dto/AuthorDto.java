@@ -33,14 +33,17 @@ public class AuthorDto {
     private long id;
     private String name;
     private String password;
+    private String role;
+
 
     public AuthorDto(Author author) {
         id = author.getId();
         name = author.getName();
         password = author.getPassword();
+        role = author.getRole();
     }
 
     public static AuthorDto toDto(Author author) {
-        return new AuthorDto(author.getId(), author.getName(), author.getPassword());
+        return new AuthorDto(author.getId(), author.getName(), author.getPassword(), author.getRole());
     }
 }

@@ -28,8 +28,8 @@ public class NoteController {
 
     @PostMapping("/api/note")
     public String createNote(@RequestBody NoteDto newNoteDto, BindingResult result) {
-        if (result.hasErrors()) {
-            return "createNote hadErrors";
+        if (newNoteDto == null || result.hasErrors() || newNoteDto.getText()==null || newNoteDto.getBookId()==0) {
+            return "Incorrect input data";
         }
         long id = service.addNote(newNoteDto);
         return new String("{ id: " + id + " }");
@@ -37,8 +37,8 @@ public class NoteController {
 
     @PostMapping("/api/note/brief")
     public String createNoteFromBriefDTO(@RequestBody NoteBriefDto newBriefDto, BindingResult result) {
-        if (result.hasErrors()) {
-            return "createNoteFromBriefDTO hadErrors";
+        if (newBriefDto == null || result.hasErrors() || newBriefDto.getText() == null) {
+            return "Incorrect input data";
         }
         long id = service.addNote(newBriefDto);
         return new String("{ id: " + id + " }");
@@ -51,9 +51,9 @@ public class NoteController {
     }
 
     @PutMapping("/api/note/{id}")
-    public String updateNote(@PathVariable("id") long id, NoteDto noteDto, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "updateNote hasErrors";
+    public String updateNote(@PathVariable("id") long id, @RequestBody NoteDto noteDto, BindingResult result, Model model) {
+        if (noteDto == null || result.hasErrors() || noteDto.getText()==null || noteDto.getBookId()==0) {
+            return "Incorrect input data";
         }
         NoteFullDto noteFullDto = new NoteFullDto();
         noteFullDto.setId(id);

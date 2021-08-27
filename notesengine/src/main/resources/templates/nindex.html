@@ -14,15 +14,23 @@
             padding: 5px;
         }
     </style>
-    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
+
 <h1>Notes:</h1>
+
+<a th:href="@{/nadd}">Add Note</a> |
+<a th:href="@{/index}">Back to Index</a>
 
 <table class="notes">
     <thead>
     <tr>
+        <th>Id</th>
         <th>Text</th>
+        <th>Author</th>
+        <th>Book</th>
+        <th>Categories</th>
     </tr>
     </thead>
     <tbody>
@@ -48,10 +56,28 @@
                         <td><a href="/aindex">${note.authorName} (${note.authorId})</a></td>
                         <td><a href="/bindex">${note.bookName} (${note.bookId})</a></td>
                         <td><a href="/cindex">${note.categoriesName} (${note.categoriesId})</a></td>
+                        <td><a href="/nedit/${note.id}">Edit</a></td>
+                        <td><input type="button" value="Del" onclick="deleteNote(${note.id})"></td>
                     </tr>                `)
             });
         })
     });
+    function deleteNote(idInScript) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/note/'+idInScript,
+        }).done(function (msg) {
+            alert('Удалена заметка '+msg);
+            console.log('SUCCESS');
+            location.reload();
+        }).fail(function (msg) {
+            alert(msg);
+            console.log('FAIL');
+        }).always(function (msg) {
+            console.log('ALWAYS');
+        });
+
+    };
 </script>
 </body>
 </html>

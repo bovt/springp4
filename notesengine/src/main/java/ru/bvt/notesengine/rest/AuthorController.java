@@ -38,8 +38,13 @@ public class AuthorController {
         return service.getAuthor(id);
     }
 
+    @GetMapping("/api/author/byName/{name}")
+    public AuthorDto showAuthor(@PathVariable("name") String name, Model model) {
+        return service.getAuthor(name);
+    }
+
     @PutMapping("/api/author/{id}")
-    public String updateAuthor(@PathVariable("id") long id, AuthorDto authorDto, BindingResult result, Model model) {
+    public String updateAuthor(@PathVariable("id") long id, @RequestBody AuthorDto authorDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "updateAuthor hasErrors";
         }

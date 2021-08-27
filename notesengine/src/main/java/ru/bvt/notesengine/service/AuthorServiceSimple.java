@@ -1,23 +1,12 @@
 package ru.bvt.notesengine.service;
 
-import ch.qos.logback.core.hook.DelayingShutdownHook;
 import lombok.AllArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bvt.notesengine.domain.Author;
-import ru.bvt.notesengine.domain.Note;
 import ru.bvt.notesengine.repository.AuthorRepository;
-import ru.bvt.notesengine.repository.AuthorRepositoryExtended;
-import ru.bvt.notesengine.repository.AuthorRepositoryExtendedSimple;
-import ru.bvt.notesengine.repository.NoteRepository;
 import ru.bvt.notesengine.rest.dto.AuthorDto;
-import ru.bvt.notesengine.rest.dto.NoteFullDto;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,17 +14,25 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorServiceSimple implements AuthorService {
 
-    private AuthorRepositoryExtended repository;
+    private final AuthorRepository repository;
 
     @Transactional(readOnly = true)
     public List<AuthorDto> getAllAuthors() {
-        return repository.findAllAsDto();
+        return repository.findAll().stream().map(AuthorDto::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public AuthorDto getAuthor(long id) {
-        return repository.findByIdAsDto(id);
+        Author author = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid author Id:" + id));
+        return new AuthorDto(author);
     }
+
+    @Transactional(readOnly = true)
+    public AuthorDto getAuthor(String name) {
+        Author author = repository.findByName(name);
+        return new AuthorDto(author);
+    }
+
 
     @Transactional(readOnly = false)
     public long addAuthor(AuthorDto authorDto) {
@@ -43,13 +40,19 @@ public class AuthorServiceSimple implements AuthorService {
         if (repository.existsById(id)) {
             throw (new IllegalArgumentException("Invalid author Id:" + id));
         }
-        authorDto.setId(0);
-        return repository.create(authorDto);
+        Author author = new Author(authorDto.getName(), authorDto.getPassword(), authorDto.getRole());
+        author = repository.save(author);
+        return author.getId();
     }
 
     @Transactional(readOnly = false)
     public long setAuthor(AuthorDto authorDto) {
-        return repository.update(authorDto);
+        Author author = repository.findById(authorDto.getId()).orElseThrow(() -> new IllegalArgumentException("Invalid author Id:" + authorDto.getId()));
+        author.setName(authorDto.getName());
+        author.setPassword(authorDto.getPassword());
+        author.setRole(authorDto.getRole());
+        author = repository.save(author);
+        return author.getId();
     }
 
     @Transactional(readOnly = false)

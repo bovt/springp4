@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="keywords" th:content="${keywords}"/>
+    <title>List of all notes</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .notes, .notes td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+<h1>Notes:</h1>
+
+<a th:href="@{/nadd}">Add Note</a> |
+<a th:href="@{/index}">Back to Index</a>
+
+<table class="notes">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Text</th>
+        <th>Author</th>
+        <th>Book</th>
+        <th>Categories</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<h1>Links:</h1>
+<br><a href="/nindex/">Notes index</a>
+<br><a href="/bindex/">Books index</a>
+<br><a href="/aindex/">Authors index</a>
+<br><a href="/cindex/">Categories index</a>
+<script>
+    $(function () {
+        $.get('/api/note').done(function (notes) {
+            notes.forEach(function (note) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${note.id}</td>
+                        <td>${note.text}</td>
+                        <td><a href="/aindex">${note.authorName} (${note.authorId})</a></td>
+                        <td><a href="/bindex">${note.bookName} (${note.bookId})</a></td>
+                        <td><a href="/cindex">${note.categoriesName} (${note.categoriesId})</a></td>
+                        <td><a href="/nedit/${note.id}">Edit</a></td>
+                    </tr>                `)
+            });
+        })
+    });
+</script>
+</body>
+</html>

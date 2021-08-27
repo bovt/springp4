@@ -22,8 +22,12 @@ public class Author {
     @Column(name = "password", nullable = false, unique = true)
     private String password;
 
-    public Author(String name, String password) {
+    @Column(name = "role", nullable = false, unique = true)
+    private String role;
+
+    public Author(String name, String password, String role) {
         this.name = name;
         this.password = password;
+        this.role = role;
     }
 }

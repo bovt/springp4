@@ -1,6 +1,7 @@
 package ru.bvt.tgnotesagent.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bvt.tgnotesagent.model.NoteVO;
@@ -13,7 +14,7 @@ import ru.bvt.tgnotesagent.rest.dto.NoteFullDto;
 import java.util.List;
 
 
-@FeignClient(name = "note-client", url = "localhost:8080",
+@FeignClient(name = "note-client", url = "192.168.43.27:8080",
         configuration = FeignClientConfiguration.class)
 //@FeignClient("note-client") - из советов в интернет, не заработало, отладка не увенчалась успехом
 //TODO: Наладить подтягивание из конфига
@@ -35,4 +36,6 @@ public interface NoteFeignClientBotEdition {
     @GetMapping("/api/note")
     List<NoteFullDto> showNoteList();
 
+    @GetMapping("/api/author/byName/{name}")
+    public AuthorDto showAuthor(@PathVariable("name") String name);
 }

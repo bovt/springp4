@@ -38,7 +38,7 @@ public class BookController {
     }
 
     @PutMapping("/api/book/{id}")
-    public String updateBook(@PathVariable("id") long id, BookDto bookDto, BindingResult result, Model model) {
+    public String updateBook(@PathVariable("id") long id, @RequestBody BookDto bookDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "updateBook hasErrors";
         }

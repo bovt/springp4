@@ -6,5 +6,5 @@ import ru.bvt.tgnotesagent.rest.dto.AuthorDto;
 import java.util.List;
 
 public interface AuthorServiceWithCB {
-    public List<AuthorDto> getAllAuthors();
+    List<AuthorDto> getAllAuthors();
 }
